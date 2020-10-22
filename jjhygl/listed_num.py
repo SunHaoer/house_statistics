@@ -63,7 +63,11 @@ def store_total(data):
     sql = """select total from day_total
     where date = %s"""
     param = str(datetime.date.today() + datetime.timedelta(-1))
-    last_total = select(sql, param)[0][0]
+    last_total = select(sql, param)
+    if last_total.__len__() != 0:
+        last_total = last_total[0][0]
+    else:
+        last_total = 0
 
     dayTotal = DayTotal(total, last_total)
     sql = """insert into day_total 
