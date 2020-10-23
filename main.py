@@ -4,6 +4,9 @@ from common.data_store import select
 from jjhygl import listed_num
 
 # 运行状态
+from tmsf import left_num
+
+
 def get_running_status(param):
     sql = """select status from task_status
     where `name` = %s"""
@@ -23,10 +26,15 @@ def do_sth():
 
         # 二手房交易监管平台挂牌量
         now = datetime.now()
-        if now.hour == 1:    # 每天一点执行
+        if now.hour == 1:    # 每天1点执行
             is_running = get_running_status("listed_num")
             if is_running == 1:
                 listed_num.action()
+
+        if now.hour == 22:
+            is_running = get_running_status("left_num")
+            if is_running == 1:
+                left_num.action()
 
         # 每小时执行
         time.sleep(60 * 60)

@@ -1,6 +1,7 @@
 import datetime
-from urllib import request
 from common.data_store import insert, select
+from common.send_requst import send_requst
+from common.substr_by_str import substr_by_str
 from jjhygl.dto.agent import Agent
 
 # 发送请求
@@ -8,22 +9,18 @@ from jjhygl.dto.day_total import DayTotal
 from jjhygl.model.request_model import RequestModel
 
 
-def send_requst(url, headers, methond):
-    req = request.Request(url=url, headers=headers, method=methond)
-    response = request.urlopen(req)
-    html = response.read().decode('utf-8')
-    return html
+# def send_requst(url, headers, methond):
+#     req = request.Request(url=url, headers=headers, method=methond)
+#     response = request.urlopen(req)
+#     html = response.read().decode('utf-8')
+#     return html
 
 # 解析字符串
 def analysis(str):
     # 截取字符串
     startSubStr = "<div class=\"lastMonthList\">"
-    startIndex = str.find(startSubStr)
-    endIndex = len(str)
-    str = str[startIndex : endIndex]
     endSubStr = "</div>"
-    endIndex = str.find(endSubStr)
-    str = str[len(startSubStr) : endIndex]
+    str = substr_by_str(str, startSubStr, endSubStr)
 
     # 提取数据
     strs = str.split("\n")
@@ -69,16 +66,17 @@ def store_total(data):
     else:
         last_total = 0
 
-    dayTotal = DayTotal(total, last_total)
+    day_total = DayTotal(total, last_total)
     sql = """insert into day_total 
     (`total`, `increase`, `date`) 
     values (%s, %s, %s)"""
     params = []
-    params.append([dayTotal.total, dayTotal.increase, dayTotal.date])
+    params.append([day_total.total, day_total.increase, day_total.date])
     params = tuple(params)
     insert(sql, params)
 
 
+# 杭州二手房管理平台各中介挂牌数量
 def action():
     print("-----start-------")
 
@@ -89,4 +87,10 @@ def action():
     store_total(data)
 
     print("-----end---------")
+
+
+if __name__ == '__main__':
+    print("start")
+    action()
+    print("end")
 
