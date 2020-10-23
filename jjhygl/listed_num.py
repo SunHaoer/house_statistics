@@ -79,7 +79,7 @@ def store_total(data):
     insert(sql, params)
 
 
-def init():
+def action():
     print("-----start-------")
 
     requst_model = RequestModel()
