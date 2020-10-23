@@ -1,7 +1,10 @@
 import pymysql
 
+from common.config import configs
+
+
 def get_db():
-    db = pymysql.connect("localhost", "root", "123456", "house_statistics")
+    db = pymysql.connect(configs.get("db").get("ip"), configs.get("db").get("user"), configs.get("db").get("password"), configs.get("db").get("database"))
     return db
 
 def insert(sql, params):
